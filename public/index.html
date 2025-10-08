@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Coach</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="description" content="Practice technical and behavioral interviews with an AI-powered coach">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-brain"></i>
+                    AI Interview Coach
+                </h1>
+                <div class="header-actions">
+                    <button id="clearChat" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i>
+                        Clear Chat
+                    </button>
+                    <button id="voiceToggle" class="btn btn-secondary">
+                        <i class="fas fa-microphone"></i>
+                        <span class="voice-status">Voice Off</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Chat Container -->
+        <main class="chat-container">
+            <!-- Welcome Message -->
+            <div id="welcomeMessage" class="welcome-section">
+                <div class="welcome-content">
+                    <i class="fas fa-graduation-cap welcome-icon"></i>
+                    <h2>Welcome to AI Interview Coach!</h2>
+                    <p>I'm here to help you practice technical and behavioral interview questions. I'll provide feedback, ask follow-up questions, and adapt to your skill level.</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-code"></i>
+                            <span>Technical Questions</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-comments"></i>
+                            <span>Behavioral Practice</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Adaptive Difficulty</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-microphone"></i>
+                            <span>Voice Input</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="chat-messages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading-indicator hidden">
+                <div class="typing-animation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span>AI Coach is thinking...</span>
+            </div>
+        </main>
+
+        <!-- Input Section -->
+        <footer class="input-section">
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type your response or click the microphone to speak..." 
+                        rows="1"
+                        maxlength="2000"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button id="voiceInput" class="btn btn-icon" title="Voice Input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button id="sendMessage" class="btn btn-primary" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-info">
+                    <span id="charCount">0/2000</span>
+                    <span class="voice-hint">💡 Tip: Use voice input for a more natural interview experience</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Voice Recognition Modal -->
+    <div id="voiceModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Voice Recognition Active</h3>
+                <button id="closeVoiceModal" class="btn btn-icon">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="voice-animation">
+                    <div class="voice-circle"></div>
+                    <div class="voice-wave"></div>
+                </div>
+                <p id="voiceStatus">Listening... Speak now</p>
+                <div id="voiceTranscript" class="voice-transcript"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="stopVoice" class="btn btn-secondary">Stop Listening</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="toast toast-error hidden">
+        <div class="toast-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span id="errorMessage">An error occurred</span>
+        </div>
+        <button id="closeToast" class="btn btn-icon">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="toast toast-success hidden">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="successMessage">Success!</span>
+        </div>
+        <button id="closeSuccessToast" class="btn btn-icon">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script src="chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "ai-interview-coach",
+  "version": "1.0.0",
+  "description": "AI-powered interview coach using Cloudflare platform",
+  "main": "functions/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "node deploy.js",
+    "deploy:worker": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy public",
+    "preview": "wrangler pages dev public",
+    "logs": "wrangler tail",
+    "test": "node test.js",
+    "setup": "node deploy.js"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "ai",
+    "interview",
+    "coach",
+    "llama"
+  ],
+  "author": "AI Interview Coach",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.42.1"
+  }
+}

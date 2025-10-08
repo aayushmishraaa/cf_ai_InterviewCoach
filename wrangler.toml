@@ -1,0 +1,38 @@
+name = "ai-interview-coach"
+main = "functions/index.js"
+compatibility_date = "2024-10-08"
+
+# Worker configuration
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[env.development.vars]
+ENVIRONMENT = "development"
+
+# Durable Objects binding
+[[durable_objects.bindings]]
+name = "INTERVIEW_SESSIONS"
+class_name = "InterviewSession"
+
+# KV binding for backup storage
+[[kv_namespaces]]
+binding = "INTERVIEW_KV"
+id = "ad5cfbcf27204f88b20031de517ad025"
+preview_id = "dfcacdcc989b48b8b6c0dcf2b30717d8"
+
+# AI binding for Llama model
+[ai]
+binding = "AI"
+remote = true
+
+# Pages configuration
+[env.production]
+pages_build_output_dir = "public"
+
+[env.development]
+pages_build_output_dir = "public"
+
+# Migration for Durable Objects (using SQLite for free plan)
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["InterviewSession"]

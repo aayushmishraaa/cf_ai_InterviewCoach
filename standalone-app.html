@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Coach</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.assistant .avatar {
+            background: #667eea;
+            color: white;
+        }
+
+        .message.user .avatar {
+            background: #28a745;
+            color: white;
+        }
+
+        .input-section {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 22px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            background: #5a6fd8;
+            transform: scale(1.05);
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            background: #f8f9fa;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .status.connected {
+            color: #28a745;
+        }
+
+        .status.error {
+            color: #dc3545;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            color: #666;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Interview Coach</h1>
+            <p>Practice technical and behavioral interviews with AI guidance</p>
+        </div>
+        
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <!-- Messages will be added here -->
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                AI is thinking...
+            </div>
+            
+            <div class="input-section">
+                <div class="input-group">
+                    <textarea 
+                        id="messageInput" 
+                        class="input-field" 
+                        placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+                        rows="1"
+                    ></textarea>
+                    <button id="sendButton" class="send-button" title="Send message">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="status">
+            Connecting to AI Interview Coach...
+        </div>
+    </div>
+
+    <script>
+        class InterviewCoach {
+            constructor() {
+                this.apiBase = 'https://ai-interview-coach.aayushmishraaa.workers.dev/api';
+                this.userId = this.generateUserId();
+                this.isInitialized = false;
+                
+                this.initializeElements();
+                this.initializeEventListeners();
+                this.initializeSession();
+            }
+
+            generateUserId() {
+                let userId = localStorage.getItem('interview_coach_user_id');
+                if (!userId) {
+                    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('interview_coach_user_id', userId);
+                }
+                return userId;
+            }
+
+            initializeElements() {
+                this.messagesContainer = document.getElementById('messages');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.statusElement = document.getElementById('status');
+                this.typingIndicator = document.getElementById('typingIndicator');
+            }
+
+            initializeEventListeners() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                
+                this.messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                this.messageInput.addEventListener('input', () => {
+                    this.autoResize();
+                });
+            }
+
+            autoResize() {
+                this.messageInput.style.height = 'auto';
+                this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+            }
+
+            async initializeSession() {
+                try {
+                    this.updateStatus('Initializing session...', 'connecting');
+                    
+                    const response = await fetch(`${this.apiBase}/session/init`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: this.userId })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.isInitialized = true;
+                        this.loadChatHistory(data.session.messages);
+                        this.updateStatus('Connected to AI Interview Coach', 'connected');
+                        this.messageInput.focus();
+                    } else {
+                        throw new Error(data.error || 'Failed to initialize session');
+                    }
+                } catch (error) {
+                    console.error('Session initialization failed:', error);
+                    this.updateStatus(`Connection failed: ${error.message}`, 'error');
+                    
+                    // Add error message to chat
+                    this.addMessage('assistant', 
+                        'Sorry, I\'m having trouble connecting to the AI service. Please refresh the page to try again.', 
+                        new Date().toISOString()
+                    );
+                }
+            }
+
+            loadChatHistory(messages) {
+                messages.forEach(message => {
+                    this.addMessage(message.role, message.content, message.timestamp, false);
+                });
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message || !this.isInitialized) return;
+
+                // Add user message to chat
+                this.addMessage('user', message, new Date().toISOString());
+                this.messageInput.value = '';
+                this.autoResize();
+                
+                // Disable input while processing
+                this.setInputDisabled(true);
+                this.showTypingIndicator();
+
+                try {
+                    const response = await fetch(`${this.apiBase}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: message,
+                            userId: this.userId
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    this.hideTypingIndicator();
+                    
+                    if (data.success) {
+                        this.addMessage('assistant', data.message.content, data.message.timestamp);
+                    } else {
+                        throw new Error(data.error || 'Failed to get AI response');
+                    }
+                } catch (error) {
+                    console.error('Send message failed:', error);
+                    this.hideTypingIndicator();
+                    this.addMessage('assistant', 
+                        'Sorry, I encountered an error processing your message. Please try again.', 
+                        new Date().toISOString()
+                    );
+                } finally {
+                    this.setInputDisabled(false);
+                    this.messageInput.focus();
+                }
+            }
+
+            addMessage(role, content, timestamp, scroll = true) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${role}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'avatar';
+                avatar.textContent = role === 'assistant' ? '🤖' : '👤';
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                messageContent.textContent = content;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(messageContent);
+                
+                this.messagesContainer.appendChild(messageDiv);
+                
+                if (scroll) {
+                    this.scrollToBottom();
+                }
+            }
+
+            showTypingIndicator() {
+                this.typingIndicator.style.display = 'flex';
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                this.typingIndicator.style.display = 'none';
+            }
+
+            setInputDisabled(disabled) {
+                this.messageInput.disabled = disabled;
+                this.sendButton.disabled = disabled;
+            }
+
+            updateStatus(message, type = '') {
+                this.statusElement.textContent = message;
+                this.statusElement.className = `status ${type}`;
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+                }, 50);
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new InterviewCoach();
+        });
+    </script>
+</body>
+</html>
